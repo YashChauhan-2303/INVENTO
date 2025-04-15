@@ -9,18 +9,22 @@ import { supabase } from '@/integrations/supabase/client';
 import AuthLayout from '@/components/auth/AuthLayout';
 import { useAuth } from '@/hooks/useAuth';
 
+const signIn = async (email: string, password: string) => {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  return { data, error }; // Return both data and error for proper handling
+};
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     if (!email || !password) {
       toast({
         title: 'Error',
@@ -32,8 +36,21 @@ const Login = () => {
     }
 
     try {
-      await signIn(email, password);
+      const { error } = await signIn(email, password); // Ensure signIn returns an error if login fails
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: 'Login Successful',
+        description: 'Redirecting to dashboard...',
+        variant: 'default',
+      });
+
+      console.log('Navigating to /dashboard'); // Debugging log
+      navigate('/dashboard'); // Ensure this route exists in your app
     } catch (error: any) {
+      console.error('Login error:', error); // Debugging log
       toast({
         title: 'Error',
         description: error.message || 'An unexpected error occurred.',

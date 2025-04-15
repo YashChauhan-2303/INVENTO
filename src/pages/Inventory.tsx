@@ -133,6 +133,39 @@ const Inventory = () => {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+  
+    if (!email || !password) {
+      toast({
+        title: 'Error',
+        description: 'Please fill in all fields.',
+        variant: 'destructive',
+      });
+      setIsLoading(false);
+      return;
+    }
+  
+    try {
+      await signIn(email, password);
+      toast({
+        title: 'Login Successful',
+        description: 'Redirecting to dashboard...',
+        variant: 'default',
+      });
+      navigate('/dashboard'); // Ensure this redirects to the correct route
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'An unexpected error occurred.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center p-8">
@@ -254,6 +287,27 @@ const Inventory = () => {
       </AlertDialog>
     </div>
   );
+};
+
+const ProtectedRoute = () => {
+  const { user, isLoading } = useAuth();
+  const location = useLocation();
+
+  useEffect(() => {
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return <Outlet />;
 };
 
 export default Inventory;
