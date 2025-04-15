@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, User, Shield, Clock, Mail, Key } from 'lucide-react';
+import { User, Mail } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import {
   Tabs,
@@ -34,38 +33,38 @@ const Profile = () => {
       .substring(0, 2);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      await updateProfile({
-        name: formData.name,
-      });
-    } catch (error) {
-      toast({
-        title: "Update Failed",
-        description: "There was an error updating your profile.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
+  // Auto-save functionality - updates profile whenever form data changes
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // If changing name field, auto-update the profile
+    if (name === 'name') {
+      setIsLoading(true);
+      try {
+        await updateProfile({
+          name: value,
+        });
+        
+        // Optionally show a toast for successful update
+        toast({
+          title: "Profile Updated",
+          description: "Your profile has been updated automatically",
+          variant: "default",
+        });
+      } catch (error) {
+        toast({
+          title: "Update Failed",
+          description: "There was an error updating your profile.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
     }
-  };
-
-  const handleChangePassword = () => {
-    toast({
-      title: "Coming Soon",
-      description: "Password change functionality will be available in a future update.",
-      variant: "default",
-    });
-  };
-
-  const handleEnableNotifications = () => {
-    toast({
-      title: "Coming Soon",
-      description: "Notification preferences will be available in a future update.",
-      variant: "default",
-    });
   };
 
   return (
@@ -93,140 +92,71 @@ const Profile = () => {
               <h3 className="text-xl font-semibold text-gray-900">
                 {formData.name || 'User'}
               </h3>
-              <p className="text-sm text-gray-500">{formData.email}</p>
-              <div className="flex items-center mt-2 text-sm text-invento-600">
-                <Shield className="h-4 w-4 mr-1" />
-                <span>{user?.app_metadata?.role || 'Standard User'}</span>
-              </div>
+              <p className="text-gray-500">{formData.email}</p>
             </div>
 
-            <div className="space-y-6">
-              <form onSubmit={handleSubmit}>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-medium text-gray-700">
-                      Full Name
-                    </label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Enter your full name"
-                      className="max-w-md"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                      Email Address
-                    </label>
-                    <div className="flex max-w-md">
-                      <Input
-                        id="email"
-                        value={formData.email}
-                        disabled
-                        className="bg-gray-50"
-                      />
-                    </div>
-                    <p className="text-xs text-gray-500">
-                      Email cannot be changed. Please contact support if you need to update your email.
-                    </p>
-                  </div>
-
-                  <Button type="submit" disabled={isLoading} className="mt-2">
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Updating...
-                      </>
-                    ) : (
-                      'Save Changes'
-                    )}
-                  </Button>
+            <div className="space-y-4">
+              <form className="space-y-4">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
+                    <User className="h-4 w-4 text-gray-500" />
+                    Full Name
+                  </label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Enter your name"
+                    disabled={isLoading}
+                    className="animate-fade-in"
+                  />
                 </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-sm font-medium flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-gray-500" />
+                    Email Address
+                  </label>
+                  <Input
+                    id="email"
+                    value={formData.email}
+                    disabled
+                    className="bg-gray-50"
+                  />
+                </div>
+                <p className="text-xs text-gray-500">
+                  Email cannot be changed. Please contact support if you need to update your email.
+                </p>
               </form>
             </div>
           </CardContent>
         </Card>
 
-        {/* Right Column - Additional Settings */}
+        {/* Right Column - Account Information */}
         <div className="w-full md:w-96 space-y-6">
-          {/* Account Information */}
           <Card>
             <CardHeader>
               <CardTitle>Account Information</CardTitle>
               <CardDescription>Details about your account</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between py-2 border-b">
+              <div className="flex items-center justify-between py-2 border-b border-gray-100">
                 <div className="flex items-center space-x-2">
-                  <Clock className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Member Since</span>
+                  <User className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm text-gray-600">User ID</span>
                 </div>
-                <span className="text-sm font-medium">
-                  {new Date(user?.created_at || '').toLocaleDateString()}
-                </span>
+                <span className="text-sm font-mono">{user?.id?.substring(0, 8)}...</span>
               </div>
-              <div className="flex items-center justify-between py-2 border-b">
+              
+              <div className="flex items-center justify-between py-2 border-b border-gray-100">
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Email Status</span>
-                </div>
-                <span className="text-sm font-medium text-green-600">
-                  Verified
-                </span>
-              </div>
-              <div className="flex items-center justify-between py-2">
-                <div className="flex items-center space-x-2">
-                  <Shield className="h-4 w-4 text-gray-500" />
                   <span className="text-sm text-gray-600">Account Type</span>
                 </div>
                 <span className="text-sm font-medium">
                   {user?.app_metadata?.role || 'Standard User'}
                 </span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Security Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Security</CardTitle>
-              <CardDescription>Manage your account security</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <div className="flex items-center space-x-2">
-                    <Key className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium">Password</span>
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    Last changed 30 days ago
-                  </p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleChangePassword}
-                >
-                  Change
-                </Button>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <span className="text-sm font-medium">Two-Factor Auth</span>
-                  <p className="text-xs text-gray-500">
-                    Add an extra layer of security
-                  </p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleEnableNotifications}
-                >
-                  Enable
-                </Button>
               </div>
             </CardContent>
           </Card>
@@ -236,4 +166,4 @@ const Profile = () => {
   );
 };
 
-export default Profile; 
+export default Profile;

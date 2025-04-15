@@ -117,15 +117,15 @@ const Settings = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="en">English</SelectItem>
-                      <SelectItem value="es">Spanish</SelectItem>
-                      <SelectItem value="fr">French</SelectItem>
-                      <SelectItem value="de">German</SelectItem>
+                      <SelectItem value="es">More Coming Soon!!</SelectItem>
+                      {/* <SelectItem value="fr">French</SelectItem>
+                      <SelectItem value="de">German</SelectItem> */}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               
-              <div className="flex items-center justify-between py-3">
+              {/* <div className="flex items-center justify-between py-3">
                 <div className="flex items-center">
                   <div className="bg-green-100 p-2 rounded-full mr-4">
                     <RotateCw className="h-5 w-5 text-green-700" />
@@ -139,7 +139,7 @@ const Settings = () => {
                   checked={settings.autoBackup}
                   onCheckedChange={toggleAutomaticBackup}
                 />
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

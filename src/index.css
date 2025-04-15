@@ -296,3 +296,7 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #aaa;
 }
+
+.inventory-dialog [data-radix-popper-content-wrapper] > div:first-child {
+  background-color: transparent !important;
+}
