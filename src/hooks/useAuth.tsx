@@ -11,7 +11,6 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, name: string) => Promise<void>;
   signOut: () => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
   updateProfile: (data: { name: string }) => Promise<void>;
 }
 
@@ -68,7 +67,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       // The onAuthStateChange listener will handle navigation/state updates
-      // navigate('/'); // Remove explicit navigation here
     } catch (error: any) {
       toast({
         title: "Login Failed",
@@ -80,8 +78,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string, name: string) => {
     try {
-      const { error } = await supabase.auth.signUp({ 
-        email, 
+      const { error } = await supabase.auth.signUp({
+        email,
         password,
         options: {
           data: {
@@ -108,29 +106,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       await supabase.auth.signOut();
       // The onAuthStateChange listener will handle navigation/state updates
-      // navigate('/login'); // Remove explicit navigation here
     } catch (error: any) {
       toast({
         title: "Sign Out Failed",
         description: error.message || "Failed to sign out. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const signInWithGoogle = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/`
-        }
-      });
-      if (error) throw error;
-    } catch (error: any) {
-      toast({
-        title: "Google Sign In Failed",
-        description: error.message || "Failed to sign in with Google. Please try again.",
         variant: "destructive"
       });
     }
@@ -172,15 +151,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      session, 
-      isLoading, 
-      signIn, 
-      signUp, 
-      signOut, 
-      signInWithGoogle,
-      updateProfile 
+    <AuthContext.Provider value={{
+      user,
+      session,
+      isLoading,
+      signIn,
+      signUp,
+      signOut,
+      updateProfile
     }}>
       {children}
     </AuthContext.Provider>
