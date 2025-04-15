@@ -25,30 +25,50 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set up auth state listener FIRST
+    setIsLoading(true);
+    console.log("AuthProvider: useEffect - Setting up listener. isLoading=true");
+
+    // Set up the listener immediately. It handles auth changes AND initial state.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      (_event, currentSession) => {
+        console.log("AuthProvider: onAuthStateChange event.", { _event, sessionUserId: currentSession?.user?.id });
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
-        setIsLoading(false);
+        setIsLoading(false); // <<< Loading finishes when listener provides the state
+        console.log("AuthProvider: State updated via listener. isLoading=false");
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      setIsLoading(false);
-    });
+     // Also check the session once initially to potentially speed up the first load,
+     // but the listener above is the ultimate source of truth for isLoading=false.
+     supabase.auth.getSession().then(({ error }) => {
+         if(error) {
+             console.error("AuthProvider: Error during initial getSession check:", error);
+             // Don't set loading false here. Listener will handle it.
+         } else {
+            console.log("AuthProvider: Initial getSession check successful (state will be confirmed by listener).");
+         }
+     }).catch(error => {
+         console.error("AuthProvider: Promise error during initial getSession check:", error);
+         // Don't set loading false here. Listener will handle it.
+     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+
+    // Cleanup function
+    return () => {
+      console.log("AuthProvider: Unsubscribing auth listener.");
+      if (subscription) {
+         subscription.unsubscribe();
+      }
+    };
+  }, []); // Runs once on mount
 
   const signIn = async (email: string, password: string) => {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      navigate('/');
+      // The onAuthStateChange listener will handle navigation/state updates
+      // navigate('/'); // Remove explicit navigation here
     } catch (error: any) {
       toast({
         title: "Login Failed",
@@ -87,7 +107,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
-      navigate('/login');
+      // The onAuthStateChange listener will handle navigation/state updates
+      // navigate('/login'); // Remove explicit navigation here
     } catch (error: any) {
       toast({
         title: "Sign Out Failed",

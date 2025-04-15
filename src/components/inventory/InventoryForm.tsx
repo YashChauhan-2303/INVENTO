@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { 
   Dialog, 
@@ -83,11 +82,10 @@ const InventoryForm = ({ isOpen, onClose, item, onSave }: InventoryFormProps) =>
     };
     
     onSave(itemToSave);
-    onClose();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
       <DialogContent className="sm:max-w-[500px] animate-fade-in">
         <DialogHeader>
           <DialogTitle>

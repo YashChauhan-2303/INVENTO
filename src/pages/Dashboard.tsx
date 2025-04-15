@@ -1,11 +1,9 @@
-
 import { 
   Package2, 
   ShoppingCart, 
   AlertTriangle, 
   LayoutGrid,
   Loader2,
-  ArrowUpRight,
   TrendingUp,
   TrendingDown,
   Clock
@@ -19,7 +17,6 @@ import LowStockAlerts from '@/components/dashboard/LowStockAlerts';
 import { useDashboard } from '@/hooks/useDashboard';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 
 const Dashboard = () => {
   const { 
@@ -134,18 +131,12 @@ const Dashboard = () => {
       </div>
       
       {/* Charts section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
         <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow animate-fade-in" style={{animationDelay: "0.4s"}}>
           <CardHeader className="bg-gradient-to-r from-invento-50 to-invento-100 border-b border-gray-200 pb-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle>Inventory Trends</CardTitle>
-                <CardDescription>Stock level changes over time</CardDescription>
-              </div>
-              <Button variant="outline" size="sm" className="h-7 px-2 text-xs flex items-center gap-1">
-                View Details
-                <ArrowUpRight className="h-3 w-3" />
-              </Button>
+            <div>
+              <CardTitle>Inventory Trends</CardTitle>
+              <CardDescription>Stock level changes over time</CardDescription>
             </div>
           </CardHeader>
           <CardContent className="p-4">
@@ -155,15 +146,9 @@ const Dashboard = () => {
         
         <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow animate-fade-in" style={{animationDelay: "0.5s"}}>
           <CardHeader className="bg-gradient-to-r from-invento-50 to-invento-100 border-b border-gray-200 pb-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>Latest transactions and updates</CardDescription>
-              </div>
-              <Button variant="outline" size="sm" className="h-7 px-2 text-xs flex items-center gap-1">
-                View All
-                <ArrowUpRight className="h-3 w-3" />
-              </Button>
+            <div>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>Latest transactions and updates</CardDescription>
             </div>
           </CardHeader>
           <CardContent className="p-4">
@@ -173,18 +158,12 @@ const Dashboard = () => {
       </div>
       
       {/* Additional charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
         <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow animate-fade-in" style={{animationDelay: "0.6s"}}>
           <CardHeader className="bg-gradient-to-r from-invento-50 to-invento-100 border-b border-gray-200 pb-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle>Category Breakdown</CardTitle>
-                <CardDescription>Stock distribution by category</CardDescription>
-              </div>
-              <Button variant="outline" size="sm" className="h-7 px-2 text-xs flex items-center gap-1">
-                View Details
-                <ArrowUpRight className="h-3 w-3" />
-              </Button>
+            <div>
+              <CardTitle>Category Breakdown</CardTitle>
+              <CardDescription>Stock distribution by category</CardDescription>
             </div>
           </CardHeader>
           <CardContent className="p-4">
@@ -194,15 +173,9 @@ const Dashboard = () => {
         
         <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow animate-fade-in" style={{animationDelay: "0.7s"}}>
           <CardHeader className="bg-gradient-to-r from-invento-50 to-invento-100 border-b border-gray-200 pb-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle>Low Stock Alerts</CardTitle>
-                <CardDescription>Items that need restocking</CardDescription>
-              </div>
-              <Button variant="outline" size="sm" className="h-7 px-2 text-xs flex items-center gap-1">
-                View All
-                <ArrowUpRight className="h-3 w-3" />
-              </Button>
+            <div>
+              <CardTitle>Low Stock Alerts</CardTitle>
+              <CardDescription>Items that need restocking</CardDescription>
             </div>
           </CardHeader>
           <CardContent className="p-4">

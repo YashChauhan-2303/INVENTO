@@ -18,16 +18,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle,
+  DialogFooter,
+  DialogTrigger,
+  DialogClose
+} from "@/components/ui/dialog";
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Search, Loader2 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import InventoryTable from '@/components/inventory/InventoryTable';
-import InventoryForm from '@/components/inventory/InventoryForm';
+import InventoryFormFields from '@/components/inventory/InventoryFormFields';
 import { InventoryItem } from '@/types';
 import { useInventory } from '@/hooks/useInventory';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 
 const categories = ['Electronics', 'Office', 'Furniture', 'Supplies', 'Equipment'];
 const locations = ['Warehouse A', 'Warehouse B', 'Warehouse C', 'Warehouse D'];
@@ -44,42 +51,6 @@ const Inventory = () => {
   
   const { toast } = useToast();
 
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    quantity: '',
-    category: '',
-    price: '',
-  });
-  
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    
-    toast({
-      title: "Item Added",
-      description: "New inventory item has been added successfully",
-    });
-    
-    // Reset form and close dialog
-    setFormData({
-      name: '',
-      description: '',
-      quantity: '',
-      category: '',
-      price: '',
-    });
-    setIsFormOpen(false);
-  };
-
   // Filter items based on search and filters
   const filteredItems = items.filter(item => {
     const matchesSearch = 
@@ -94,11 +65,13 @@ const Inventory = () => {
   });
 
   const handleAddItem = () => {
+    console.log("Opening Add Item dialog");
     setCurrentItem(undefined);
     setIsFormOpen(true);
   };
 
   const handleEditItem = (item: InventoryItem) => {
+    console.log("Opening Edit Item dialog for:", item.product_name);
     setCurrentItem(item);
     setIsFormOpen(true);
   };
@@ -124,12 +97,13 @@ const Inventory = () => {
 
   const handleSaveItem = async (formData: Omit<InventoryItem, 'id' | 'user_id'> & { id?: string }) => {
     let success = false;
+    const isEditing = !!formData.id;
+
+    console.log("Saving item:", formData);
     
-    if (formData.id) {
-      // Update existing item
+    if (isEditing) {
       const { id, ...updateData } = formData;
-      success = await updateItem(id, updateData);
-      
+      success = await updateItem(id!, updateData);
       if (success) {
         toast({
           title: "Item updated",
@@ -137,10 +111,9 @@ const Inventory = () => {
         });
       }
     } else {
-      // Add new item
-      const newItem = await addItem(formData);
+      const { id, ...addData } = formData;
+      const newItem = await addItem(addData);
       success = !!newItem;
-      
       if (success) {
         toast({
           title: "Item added",
@@ -151,6 +124,12 @@ const Inventory = () => {
     
     if (success) {
       setIsFormOpen(false);
+    } else {
+      toast({
+        title: isEditing ? "Update Failed" : "Add Failed",
+        description: `Could not save "${formData.product_name}". Please try again.`,
+        variant: "destructive"
+      });
     }
   };
 
@@ -169,97 +148,31 @@ const Inventory = () => {
         title="Inventory Management" 
         subtitle="Manage and track your inventory items"
         action={
-          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen} >
+          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
-              <Button className="flex items-center gap-2">
+              <Button onClick={handleAddItem} className="flex items-center gap-2 animate-fade-in">
                 <Plus size={16} />
                 New Item
               </Button>
             </DialogTrigger>
+            
             <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
-                <DialogTitle>Add New Inventory Item</DialogTitle>
+                <DialogTitle>
+                  {currentItem ? 'Edit Inventory Item' : 'Add New Inventory Item'}
+                </DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Item Name</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="Enter item name"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
-                    <Input
-                      id="category"
-                      name="category"
-                      value={formData.category}
-                      onChange={handleInputChange}
-                      placeholder="Select category"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    placeholder="Enter item description"
-                    rows={3}
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="quantity">Quantity</Label>
-                    <Input
-                      id="quantity"
-                      name="quantity"
-                      type="number"
-                      value={formData.quantity}
-                      onChange={handleInputChange}
-                      placeholder="0"
-                      min="0"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="price">Unit Price</Label>
-                    <Input
-                      id="price"
-                      name="price"
-                      type="number"
-                      value={formData.price}
-                      onChange={handleInputChange}
-                      placeholder="0.00"
-                      min="0"
-                      step="0.01"
-                    />
-                  </div>
-                </div>
-                
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button type="submit">
-                    Add Item
-                  </Button>
-                </div>
-              </form>
+              
+              <InventoryFormFields 
+                item={currentItem} 
+                onSave={handleSaveItem} 
+                onCancel={() => setIsFormOpen(false)}
+              />
             </DialogContent>
           </Dialog>
         }
       />
       
-      {/* Filters */}
       <div className="flex flex-col md:flex-row gap-4 mb-6 animate-fade-in">
         <div className="flex-1">
           <div className="relative">
@@ -312,22 +225,12 @@ const Inventory = () => {
         </div>
       </div>
       
-      {/* Table */}
       <InventoryTable 
         items={filteredItems} 
         onEdit={handleEditItem} 
         onDelete={handleDeleteItem} 
       />
       
-      {/* Add/Edit Form Dialog */}
-      <InventoryForm 
-        isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        item={currentItem}
-        onSave={handleSaveItem}
-      />
-      
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
