@@ -81,7 +81,7 @@ const Settings = () => {
             <p className="text-sm text-gray-500 mb-6">Manage your application preferences</p>
             
             <div className="space-y-6">
-              <div className="flex items-center justify-between py-3 border-b border-gray-100">
+              {/* <div className="flex items-center justify-between py-3 border-b border-gray-100">
                 <div className="flex items-center">
                   <div className="bg-yellow-100 p-2 rounded-full mr-4">
                     <Moon className="h-5 w-5 text-yellow-700" />
@@ -95,7 +95,7 @@ const Settings = () => {
                   checked={settings.theme === 'dark'}
                   onCheckedChange={toggleDarkMode}
                 />
-              </div>
+              </div> */}
               
               <div className="flex items-center justify-between py-3 border-b border-gray-100">
                 <div className="flex items-center">
