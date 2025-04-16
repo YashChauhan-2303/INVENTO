@@ -160,7 +160,7 @@ const Reports = () => {
       
       {activeTab === 'dashboard' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow animate-fade-in">
+          {/* <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow animate-fade-in">
             <CardHeader className="bg-gradient-to-r from-invento-50 to-invento-100 border-b border-gray-200">
               <CardTitle>Sales Overview</CardTitle>
               <CardDescription>Monthly revenue, expenses and profit</CardDescription>
@@ -168,7 +168,7 @@ const Reports = () => {
             <CardContent className="p-6">
               <SalesOverviewChart data={salesData} />
             </CardContent>
-          </Card>
+          </Card> */}
           
           <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow animate-fade-in">
             <CardHeader className="bg-gradient-to-r from-invento-50 to-invento-100 border-b border-gray-200">

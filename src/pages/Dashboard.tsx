@@ -132,7 +132,7 @@ const Dashboard = () => {
       
       {/* Charts section */}
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow animate-fade-in" style={{animationDelay: "0.4s"}}>
+        {/* <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow animate-fade-in" style={{animationDelay: "0.4s"}}>
           <CardHeader className="bg-gradient-to-r from-invento-50 to-invento-100 border-b border-gray-200 pb-4">
             <div>
               <CardTitle>Inventory Trends</CardTitle>
@@ -142,8 +142,20 @@ const Dashboard = () => {
           <CardContent className="p-4">
             <InventoryTrendsChart data={inventoryTrends} />
           </CardContent>
-        </Card>
+        </Card> */}
         
+        <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow animate-fade-in" style={{animationDelay: "0.7s"}}>
+          <CardHeader className="bg-gradient-to-r from-invento-50 to-invento-100 border-b border-gray-200 pb-4">
+            <div>
+              <CardTitle>Low Stock Alerts</CardTitle>
+              <CardDescription>Items that need restocking</CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4">
+            <LowStockAlerts items={lowStockItems} />
+          </CardContent>
+        </Card>
+      
         <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow animate-fade-in" style={{animationDelay: "0.5s"}}>
           <CardHeader className="bg-gradient-to-r from-invento-50 to-invento-100 border-b border-gray-200 pb-4">
             <div>
@@ -171,7 +183,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
         
-        <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow animate-fade-in" style={{animationDelay: "0.7s"}}>
+        {/* <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow animate-fade-in" style={{animationDelay: "0.7s"}}>
           <CardHeader className="bg-gradient-to-r from-invento-50 to-invento-100 border-b border-gray-200 pb-4">
             <div>
               <CardTitle>Low Stock Alerts</CardTitle>
@@ -181,7 +193,7 @@ const Dashboard = () => {
           <CardContent className="p-4">
             <LowStockAlerts items={lowStockItems} />
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );
